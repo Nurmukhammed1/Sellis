@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 
 class Product(models.Model):
     CATEGORY = (
@@ -9,7 +10,7 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, null=True)
-    image = models.ImageField(upload_to='img')
+    image = models.ImageField(upload_to='products/images/')
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=15, choices=CATEGORY, blank=True, null=True)
@@ -23,7 +24,7 @@ class Product(models.Model):
             self.slug = slugify(self.name)
             unique_slug = self.slug
             counter = 1
-            if Product.objects.filter(slug=unique_slug).exists():
+            while Product.objects.filter(slug=unique_slug).exists():
                 unique_slug = f'{self.slug}-{counter}'
                 counter += 1
             self.slug = unique_slug
